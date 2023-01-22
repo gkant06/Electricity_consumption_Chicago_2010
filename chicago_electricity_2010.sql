@@ -7,10 +7,17 @@ select sum(total)
 from project1;
 
 -- Total consumption by neighbourhood
-select community_area_name, sum(total) as community_total
+select 
+sub.community_area_name,
+sub.community_total,
+cast(cast(sub.community_total as dec(2,0))/cast(sum(sub.community_total) as dec(2,0)) as dec(2,0)) as perc
+from (
+select community_area_name, 
+       sum(total) as community_total 
 from project1
-group by community_area_name
-order by community_total desc;
+group by community_area_name) sub
+group by sub.community_area_name, sub.community_total
+order by perc desc;
 
 -- Total consumption by building type
 select building_type, sum(total) as building_total
